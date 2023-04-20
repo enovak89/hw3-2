@@ -31,7 +31,7 @@ public class FacultyController {
 
     @PostMapping
     public Faculty addFaculty(@RequestBody Faculty faculty) {
-        return facultyService.addFaculty(faculty);
+        return facultyService.createFaculty(faculty);
     }
 
     @PutMapping
@@ -42,6 +42,11 @@ public class FacultyController {
     @DeleteMapping("{id}")
     public Faculty removeFaculty(@PathVariable Long id) {
         return facultyService.removeFaculty(id);
+    }
+
+    @DeleteMapping
+    public void removeFaculty() {
+        facultyService.clearFaculty();
     }
 
     @GetMapping
