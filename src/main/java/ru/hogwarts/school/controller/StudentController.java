@@ -26,13 +26,13 @@ public class StudentController {
     }
 
     @GetMapping("age/{age}")
-    public Collection<Student> getStudentByAge(@PathVariable long age) {
-        return studentService.getStudentByAge(age) ;
+    public Collection<Student> getStudentByAge(@PathVariable Integer age) {
+        return studentService.getStudentByAge(age);
     }
 
     @PostMapping
     public Student addStudent(@RequestBody Student student) {
-        return studentService.addStudent(student);
+        return studentService.createStudent(student);
     }
 
     @PutMapping
@@ -43,6 +43,11 @@ public class StudentController {
     @DeleteMapping("{id}")
     public Student removeStudent(@PathVariable Long id) {
         return studentService.removeStudent(id);
+    }
+
+    @DeleteMapping
+    public void removeStudent() {
+        studentService.clearStudent();
     }
 
     @GetMapping
