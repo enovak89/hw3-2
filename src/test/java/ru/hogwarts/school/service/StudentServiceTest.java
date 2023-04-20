@@ -5,97 +5,128 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import ru.hogwarts.school.model.Student;
+import ru.hogwarts.school.model.Student;
+import ru.hogwarts.school.repository.StudentRepository;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
+
+import static org.mockito.Mockito.when;
 
 @ContextConfiguration(classes = {StudentService.class})
 @ExtendWith(SpringExtension.class)
 class StudentServiceTest {
 
     private final StudentService studentService;
+    @MockBean
+    private StudentRepository studentRepository;
 
     @Autowired
     public StudentServiceTest(StudentService studentService) {
         this.studentService = studentService;
     }
 
-    private static final Student CORRECT_STUDENT = new Student(1L, "Petr", 20);
-    private static final Student CORRECT_STUDENT_SECOND = new Student(2L, "Ivan", 20);
-    private static final Student CORRECT_STUDENT_THIRD = new Student(3L, "Vasiliy", 25);
-    private static final Map<Long, Student> studentMap = new HashMap<>();
+    private static final Student CORRECT_STUDENT = new Student();
 
-    @BeforeEach
-    public void clear() {
-        studentService.clearStudent();
+    static {
+        CORRECT_STUDENT.setId(1L);
+        CORRECT_STUDENT.setName("Petr");
+        CORRECT_STUDENT.setAge(20);
     }
 
     @Test
-    void addStudentCorrect() {
-        Student expectedResult = new Student(1L, "Petr", 20);
-        Assertions.assertEquals(expectedResult, studentService.addStudent(CORRECT_STUDENT));
+    void createStudentCorrect() {
+        Student expectedResult = new Student();
+        expectedResult.setId(1L);
+        expectedResult.setName("Petr");
+        expectedResult.setAge(20);
+
+        when(studentRepository.save(CORRECT_STUDENT)).thenReturn(CORRECT_STUDENT);
+
+        Assertions.assertEquals(expectedResult, studentService.createStudent(CORRECT_STUDENT));
     }
 
     @Test
     void getStudentByIdCorrect() {
-        studentService.addStudent(CORRECT_STUDENT);
-        Student expectedResult = new Student(1L, "Petr", 20);
-        Assertions.assertEquals(expectedResult, studentService.getStudentById(1L));
-    }
+        Student expectedResult = new Student();
+        expectedResult.setId(1L);
+        expectedResult.setName("Petr");
+        expectedResult.setAge(20);
 
-    @Test
-    void getStudentByIdResultNull() {
-        Assertions.assertEquals(null, studentService.getStudentById(1L));
+        when(studentRepository.findById(CORRECT_STUDENT.getId())).thenReturn(Optional.of(CORRECT_STUDENT));
+
+        Assertions.assertEquals(expectedResult, studentService.getStudentById(expectedResult.getId()));
     }
 
     @Test
     void editStudentCorrect() {
-        studentService.addStudent(CORRECT_STUDENT);
-        Student expectedResult = new Student(5L, "Petr", 30);
-        Assertions.assertEquals(expectedResult, studentService.editStudent(1L, expectedResult));
+        Student expectedResult = new Student();
+        expectedResult.setId(1L);
+        expectedResult.setName("Petr");
+        expectedResult.setAge(25);
+
+        when(studentRepository.save(expectedResult)).thenReturn(expectedResult);
+
+        Assertions.assertEquals(expectedResult, studentService.editStudent(expectedResult));
     }
 
     @Test
     void removeStudentCorrect() {
-        studentService.addStudent(CORRECT_STUDENT);
-        Student expectedResult = new Student(1L, "Petr", 20);
-        Assertions.assertEquals(expectedResult, studentService.removeStudent(1L));
-    }
+        Student expectedResult = new Student();
+        expectedResult.setId(1L);
+        expectedResult.setName("Petr");
+        expectedResult.setAge(20);
 
-    @Test
-    void removeStudentResultNull() {
-        Assertions.assertEquals(null, studentService.removeStudent(1L));
+        when(studentRepository.findById(expectedResult.getId())).thenReturn(Optional.of(expectedResult));
+
+        Assertions.assertEquals(expectedResult, studentService.removeStudent(expectedResult.getId()));
     }
 
     @Test
     void getAllStudentCorrect() {
-        studentService.addStudent(CORRECT_STUDENT);
-        studentService.addStudent(CORRECT_STUDENT_SECOND);
-        studentService.addStudent(CORRECT_STUDENT_THIRD);
-        studentMap.clear();
-        studentMap.put(1L, CORRECT_STUDENT);
-        studentMap.put(2L, CORRECT_STUDENT_SECOND);
-        studentMap.put(3L, CORRECT_STUDENT_THIRD);
-        Assertions.assertEquals(studentMap.values().toString(), studentService.getAllStudent().toString());
+        List<Student> expectedList = new ArrayList<>();
+        Student expectedResult = new Student();
+        Student expectedResultSecond = new Student();
+        expectedResult.setId(1L);
+        expectedResult.setName("Petr");
+        expectedResult.setAge(20);
+        expectedResultSecond.setId(2L);
+        expectedResultSecond.setName("Ivan");
+        expectedResultSecond.setAge(20);
+        expectedList.add(expectedResult);
+        expectedList.add(expectedResultSecond);
+
+        when(studentRepository.findAll()).thenReturn(expectedList);
+
+        Assertions.assertEquals(expectedList, studentService.getAllStudent());
     }
 
     @Test
     void getAllStudentNullResult() {
-        studentMap.clear();
-        Assertions.assertEquals(studentMap.values().toString(), studentService.getAllStudent().toString());
+        when(studentRepository.findAll()).thenReturn(null);
+
+        Assertions.assertEquals(null, studentService.getAllStudent());
     }
 
     @Test
     void getStudentByColor() {
-        studentService.addStudent(CORRECT_STUDENT);
-        studentService.addStudent(CORRECT_STUDENT_SECOND);
-        studentService.addStudent(CORRECT_STUDENT_THIRD);
-        studentMap.clear();
-        studentMap.put(1L, CORRECT_STUDENT);
-        studentMap.put(2L, CORRECT_STUDENT_SECOND);
-        Assertions.assertEquals(studentMap.values().stream().toList(), studentService.getStudentByAge(20));
+        List<Student> expectedList = new ArrayList<>();
+        Student expectedResult = new Student();
+        Student expectedResultSecond = new Student();
+        expectedResult.setId(1L);
+        expectedResult.setName("Petr");
+        expectedResult.setAge(20);
+        expectedResultSecond.setId(2L);
+        expectedResultSecond.setName("Ivan");
+        expectedResultSecond.setAge(20);
+        expectedList.add(expectedResult);
+        expectedList.add(expectedResultSecond);
+
+        when(studentRepository.findAllByAge(expectedResult.getAge())).thenReturn(expectedList);
+
+        Assertions.assertEquals(expectedList, studentService.getStudentByAge(expectedResult.getAge()));
     }
 }

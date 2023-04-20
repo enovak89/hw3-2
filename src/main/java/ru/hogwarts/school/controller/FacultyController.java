@@ -26,7 +26,7 @@ public class FacultyController {
 
     @GetMapping("color/{color}")
     public Collection<Faculty> getFacultyByColor(@PathVariable String color) {
-        return facultyService.getFacultyByColor(color) ;
+        return facultyService.getFacultyByColor(color);
     }
 
     @PostMapping
@@ -35,8 +35,8 @@ public class FacultyController {
     }
 
     @PutMapping
-    public Faculty editFaculty(@RequestBody Long id, Faculty faculty) {
-        return facultyService.editFaculty(id, faculty);
+    public Faculty editFaculty(@RequestBody Faculty faculty) {
+        return facultyService.editFaculty(faculty);
     }
 
     @DeleteMapping("{id}")

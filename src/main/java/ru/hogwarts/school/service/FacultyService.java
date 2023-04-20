@@ -30,8 +30,8 @@ public class FacultyService {
         return facultyRepository.findById(id).get();
     }
 
-    public Faculty editFaculty(Long id, Faculty faculty) {
-        return facultyRepository.save(facultyRepository.findById(id).get());
+    public Faculty editFaculty(Faculty faculty) {
+        return facultyRepository.save(faculty);
     }
 
     public Faculty removeFaculty(Long id) {

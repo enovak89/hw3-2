@@ -36,8 +36,8 @@ public class StudentController {
     }
 
     @PutMapping
-    public Student editStudent(@RequestBody Long id, Student student) {
-        return studentService.editStudent(id, student);
+    public Student editStudent(@RequestBody Student student) {
+        return studentService.editStudent(student);
     }
 
     @DeleteMapping("{id}")
