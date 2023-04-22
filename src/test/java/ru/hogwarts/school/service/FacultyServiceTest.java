@@ -1,10 +1,8 @@
 package ru.hogwarts.school.service;
 
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ContextConfiguration;
@@ -12,10 +10,12 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import ru.hogwarts.school.model.Faculty;
 import ru.hogwarts.school.repository.FacultyRepository;
 
-import java.util.*;
+import javax.annotation.PostConstruct;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.when;
 
 @ContextConfiguration(classes = {FacultyService.class})
 @ExtendWith(SpringExtension.class)
@@ -33,7 +33,8 @@ class FacultyServiceTest {
 
     private static final Faculty CORRECT_FACULTY = new Faculty();
 
-    static {
+    @PostConstruct
+            private void initData() {
         CORRECT_FACULTY.setId(1L);
         CORRECT_FACULTY.setName("Hogwarts");
         CORRECT_FACULTY.setColor("Red");
@@ -110,7 +111,7 @@ class FacultyServiceTest {
     void getAllFacultyNullResult() {
         when(facultyRepository.findAll()).thenReturn(null);
 
-        Assertions.assertEquals(null, facultyService.getAllFaculty());
+        Assertions.assertNull(facultyService.getAllFaculty());
     }
 
     @Test

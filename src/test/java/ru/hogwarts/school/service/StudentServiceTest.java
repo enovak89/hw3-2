@@ -1,7 +1,6 @@
 package ru.hogwarts.school.service;
 
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,10 +8,12 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import ru.hogwarts.school.model.Student;
-import ru.hogwarts.school.model.Student;
 import ru.hogwarts.school.repository.StudentRepository;
 
-import java.util.*;
+import javax.annotation.PostConstruct;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 import static org.mockito.Mockito.when;
 
@@ -31,7 +32,8 @@ class StudentServiceTest {
 
     private static final Student CORRECT_STUDENT = new Student();
 
-    static {
+    @PostConstruct
+    private void initData() {
         CORRECT_STUDENT.setId(1L);
         CORRECT_STUDENT.setName("Petr");
         CORRECT_STUDENT.setAge(20);
@@ -108,7 +110,7 @@ class StudentServiceTest {
     void getAllStudentNullResult() {
         when(studentRepository.findAll()).thenReturn(null);
 
-        Assertions.assertEquals(null, studentService.getAllStudent());
+        Assertions.assertNull(studentService.getAllStudent());
     }
 
     @Test
