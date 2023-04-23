@@ -53,6 +53,10 @@ public class StudentService {
         studentRepository.deleteAll();
     }
 
+    public Collection<Student> finadAllByFacultetId(Long id) {
+        return studentRepository.findAllByFaculty_Id(id);
+    }
+
     public Faculty getStudentFaculty(Long id) {
         return studentRepository.findById(id).get().getFaculty();
     }

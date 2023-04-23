@@ -7,7 +7,6 @@ import javax.persistence.*;
 import java.util.Collection;
 import java.util.Objects;
 
-@JsonIgnoreProperties(value= {"students"})
 @Entity
 public class Faculty {
     @Id
