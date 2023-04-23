@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import ru.hogwarts.school.model.Faculty;
 import ru.hogwarts.school.model.Student;
 import ru.hogwarts.school.repository.StudentRepository;
 
@@ -130,5 +131,41 @@ class StudentServiceTest {
         when(studentRepository.findAllByAge(expectedResult.getAge())).thenReturn(expectedList);
 
         Assertions.assertEquals(expectedList, studentService.getStudentByAge(expectedResult.getAge()));
+    }
+
+    @Test
+    void getStudentByAgeBetweenCorrect() {
+        List<Student> expectedList = new ArrayList<>();
+        Student expectedResult = new Student();
+        Student expectedResultSecond = new Student();
+        expectedResult.setId(1L);
+        expectedResult.setName("Petr");
+        expectedResult.setAge(20);
+        expectedResultSecond.setId(2L);
+        expectedResultSecond.setName("Ivan");
+        expectedResultSecond.setAge(25);
+        expectedList.add(expectedResult);
+        expectedList.add(expectedResultSecond);
+
+        when(studentRepository.findAllByAgeBetween(18, 65)).thenReturn(expectedList);
+
+        Assertions.assertEquals(expectedList, studentService.getStudentByAgeBetween(18, 65));
+    }
+
+    @Test
+    void getStudentFacultyCorrect() {
+        Faculty expectedResult = new Faculty();
+        expectedResult.setId(1L);
+        expectedResult.setName("Hogwarts");
+        expectedResult.setColor("Red");
+        Student expectedStudentResult = new Student();
+        expectedStudentResult.setId(1L);
+        expectedStudentResult.setName("Ivan");
+        expectedStudentResult.setAge(25);
+        expectedStudentResult.setFaculty(expectedResult);
+
+        when(studentRepository.findById(1L)).thenReturn(Optional.of(expectedStudentResult));
+
+        Assertions.assertEquals(expectedResult, studentService.getStudentFaculty(1L));
     }
 }

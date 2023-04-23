@@ -8,10 +8,13 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import ru.hogwarts.school.model.Faculty;
+import ru.hogwarts.school.model.Student;
 import ru.hogwarts.school.repository.FacultyRepository;
+import ru.hogwarts.school.repository.StudentRepository;
 
 import javax.annotation.PostConstruct;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,6 +29,9 @@ class FacultyServiceTest {
     @MockBean
     private FacultyRepository facultyRepository;
 
+    @MockBean
+    private StudentRepository studentRepository;
+
     @Autowired
     public FacultyServiceTest(FacultyService facultyService) {
         this.facultyService = facultyService;
@@ -34,7 +40,7 @@ class FacultyServiceTest {
     private static final Faculty CORRECT_FACULTY = new Faculty();
 
     @PostConstruct
-            private void initData() {
+    private void initData() {
         CORRECT_FACULTY.setId(1L);
         CORRECT_FACULTY.setName("Hogwarts");
         CORRECT_FACULTY.setColor("Red");
@@ -115,8 +121,8 @@ class FacultyServiceTest {
     }
 
     @Test
-    void getFacultyByColor() {
-        List<Faculty> expectedList = new ArrayList<>();
+    void getFacultyByColorCorrect() {
+        Collection<Faculty> expectedList = new ArrayList<>();
         Faculty expectedResult = new Faculty();
         Faculty expectedResultSecond = new Faculty();
         expectedResult.setId(1L);
@@ -128,9 +134,48 @@ class FacultyServiceTest {
         expectedList.add(expectedResult);
         expectedList.add(expectedResultSecond);
 
-        when(facultyRepository.findAllByColor(expectedResult.getColor())).thenReturn(expectedList);
+        when(facultyRepository.findAllByColorIgnoreCaseOrNameIgnoreCase(expectedResult.getColor(), null)).thenReturn(expectedList);
 
-        Assertions.assertEquals(expectedList, facultyService.getFacultyByColor(expectedResult.getColor()));
+        Assertions.assertEquals(expectedList, facultyService.getFacultyByColorOrName(expectedResult.getColor(), null));
+    }
+
+    @Test
+    void getFacultyByNameCorrect() {
+        Collection<Faculty> expectedList = new ArrayList<>();
+        Faculty expectedResult = new Faculty();
+        expectedResult.setId(1L);
+        expectedResult.setName("Hogwarts");
+        expectedResult.setColor("Red");
+        expectedList.add(expectedResult);
+
+        when(facultyRepository.findAllByColorIgnoreCaseOrNameIgnoreCase(null, expectedResult.getName())).thenReturn(expectedList);
+
+        Assertions.assertEquals(expectedList, facultyService.getFacultyByColorOrName(null, expectedResult.getName()));
+    }
+
+    @Test
+    void getStudentsByFacultyIdCorrect() {
+        List<Student> expectedStudentList = new ArrayList<>();
+        Student expectedResult = new Student();
+        Student expectedResultSecond = new Student();
+        expectedResult.setId(1L);
+        expectedResult.setName("Petr");
+        expectedResult.setAge(20);
+        expectedResultSecond.setId(2L);
+        expectedResultSecond.setName("Ivan");
+        expectedResultSecond.setAge(20);
+        expectedStudentList.add(expectedResult);
+        expectedStudentList.add(expectedResultSecond);
+        Faculty expectedFacultyResult = new Faculty();
+        expectedFacultyResult.setId(1L);
+        expectedFacultyResult.setName("Hogwarts");
+        expectedFacultyResult.setColor("Red");
+        expectedFacultyResult.setStudents(expectedStudentList);
+
+        when(studentRepository.findAllByFaculty_Id(1L)).thenReturn(expectedStudentList);
+        when(facultyRepository.findById(1L)).thenReturn(Optional.of(expectedFacultyResult));
+
+        Assertions.assertEquals(expectedStudentList, facultyService.getStudentsByFacultyId(1L));
     }
 
 }

@@ -27,7 +27,7 @@ public class StudentController {
 
     @GetMapping("facultyById")
     public ResponseEntity<Faculty> getStudentFacultyById(@RequestParam long id) {
-        if (studentService.getStudentById(id) == null)
+        if (studentService.getStudentFaculty(id) == null)
             return ResponseEntity.badRequest().build();
         return ResponseEntity.ok(studentService.getStudentFaculty(id));
     }
@@ -36,6 +36,7 @@ public class StudentController {
     public Collection<Student> getStudentByAge(@PathVariable Integer age) {
         return studentService.getStudentByAge(age);
     }
+
     @GetMapping("age")
     public Collection<Student> getStudentByAgeBetween(@RequestParam Integer min, @RequestParam Integer max) {
         return studentService.getStudentByAgeBetween(min, max);
