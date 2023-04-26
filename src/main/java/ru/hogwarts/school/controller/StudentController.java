@@ -1,5 +1,7 @@
 package ru.hogwarts.school.controller;
 
+import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.hogwarts.school.model.Faculty;
@@ -10,6 +12,7 @@ import java.util.Collection;
 
 @RestController
 @RequestMapping("student")
+//@TestConfiguration
 public class StudentController {
 
     private final StudentService studentService;
@@ -20,14 +23,14 @@ public class StudentController {
 
     @GetMapping("id/{id}")
     public ResponseEntity<Student> getStudentById(@PathVariable long id) {
-        if (studentService.getStudentById(id) == null)
-            return ResponseEntity.badRequest().build();
-        return ResponseEntity.ok(studentService.getStudentById(id));
+        if (studentService.getStudentById(id).isEmpty())
+            return ResponseEntity.status(HttpStatus.I_AM_A_TEAPOT).build();
+        return ResponseEntity.ok(studentService.getStudentById(id).get());
     }
 
     @GetMapping("facultyById")
     public ResponseEntity<Faculty> getStudentFacultyById(@RequestParam long id) {
-        if (studentService.getStudentFaculty(id) == null)
+        if (studentService.getStudentById(id).isEmpty())
             return ResponseEntity.badRequest().build();
         return ResponseEntity.ok(studentService.getStudentFaculty(id));
     }
@@ -58,7 +61,7 @@ public class StudentController {
     }
 
     @DeleteMapping
-    public void removeStudent() {
+    public void clearStudent() {
         studentService.clearStudent();
     }
 
