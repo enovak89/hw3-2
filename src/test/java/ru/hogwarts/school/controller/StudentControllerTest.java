@@ -17,6 +17,8 @@ import ru.hogwarts.school.repository.StudentRepository;
 import ru.hogwarts.school.service.StudentService;
 
 import javax.annotation.PostConstruct;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -43,6 +45,7 @@ class StudentControllerTest {
     }
 
     private static final Student CORRECT_STUDENT = new Student();
+    private static final Collection<Student> CORRECT_STUDENT_COLLECTION = new ArrayList<>();
     private static final Faculty CORRECT_FACULTY = new Faculty();
     private static final JSONObject studentObject = new JSONObject();
     private static final JSONObject facultyObject = new JSONObject();
@@ -64,6 +67,8 @@ class StudentControllerTest {
         CORRECT_FACULTY.setName(FACULTY_NAME);
 
         CORRECT_STUDENT.setFaculty(CORRECT_FACULTY);
+
+        CORRECT_STUDENT_COLLECTION.add(CORRECT_STUDENT);
 
         facultyObject.put("id", CORRECT_FACULTY.getId());
         facultyObject.put("name", CORRECT_FACULTY.getName());
@@ -98,7 +103,7 @@ class StudentControllerTest {
     }
 
     @Test
-    void getStudentFacultyById() throws Exception {
+    void getStudentFacultyByIdCorrect() throws Exception {
         when(studentRepository.findById(any(Long.class))).thenReturn(Optional.of(CORRECT_STUDENT));
 
 mockMvc.perform(MockMvcRequestBuilders
@@ -112,7 +117,27 @@ mockMvc.perform(MockMvcRequestBuilders
     }
 
     @Test
-    void getStudentByAge() {
+    void getStudentFacultyByIdIncorrect() throws Exception {
+        when(studentRepository.findById(any(Long.class))).thenReturn(Optional.empty());
+
+        mockMvc.perform(MockMvcRequestBuilders
+                        .get("/student/facultyById")
+                        .param("id", CORRECT_STUDENT.getId().toString())
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().is4xxClientError());
+    }
+
+    @Test
+    void getStudentByAgeCorrect() throws Exception {
+        when(studentRepository.findAllByAge(any(int.class))).thenReturn(CORRECT_STUDENT_COLLECTION);
+
+        mockMvc.perform(MockMvcRequestBuilders
+                        .get("/student/age/20")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.class[0].id").value(CORRECT_STUDENT.getId()))
+                .andExpect(jsonPath("@.name").value(CORRECT_STUDENT.getName()))
+                .andExpect(jsonPath("@.age").value(CORRECT_STUDENT.getAge()));
     }
 
     @Test
