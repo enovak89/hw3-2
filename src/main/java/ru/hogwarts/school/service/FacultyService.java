@@ -8,6 +8,7 @@ import ru.hogwarts.school.repository.FacultyRepository;
 import ru.hogwarts.school.repository.StudentRepository;
 
 import java.util.Collection;
+import java.util.Optional;
 
 @Service
 public class FacultyService {
@@ -25,8 +26,8 @@ public class FacultyService {
         return facultyRepository.save(faculty);
     }
 
-    public Faculty getFacultyById(Long id) {
-        return facultyRepository.findById(id).get();
+    public Optional<Faculty> getFacultyById(Long id) {
+        return facultyRepository.findById(id);
     }
 
     public Faculty editFaculty(Faculty faculty) {

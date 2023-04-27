@@ -20,14 +20,14 @@ public class FacultyController {
 
     @GetMapping("id/{id}")
     public ResponseEntity<Faculty> getFacultyById(@PathVariable long id) {
-        if (facultyService.getFacultyById(id) == null)
+        if (facultyService.getFacultyById(id).isEmpty())
             return ResponseEntity.badRequest().build();
-        return ResponseEntity.ok(facultyService.getFacultyById(id));
+        return ResponseEntity.ok(facultyService.getFacultyById(id).get());
     }
 
     @GetMapping("studentsById")
     public ResponseEntity<Collection<Student>> getStudentsById(@RequestParam long id) {
-        if (facultyService.getFacultyById(id) == null)
+        if (facultyService.getFacultyById(id).isEmpty())
             return ResponseEntity.badRequest().build();
         return ResponseEntity.ok(facultyService.getStudentsByFacultyId(id));
     }
@@ -48,7 +48,7 @@ public class FacultyController {
     }
 
     @DeleteMapping
-    public void removeFaculty() {
+    public void clearFaculty() {
         facultyService.clearFaculty();
     }
 

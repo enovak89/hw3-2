@@ -18,11 +18,11 @@ import ru.hogwarts.school.service.StudentService;
 
 import javax.annotation.PostConstruct;
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -45,7 +45,7 @@ class StudentControllerTest {
     }
 
     private static final Student CORRECT_STUDENT = new Student();
-    private static final Collection<Student> CORRECT_STUDENT_COLLECTION = new ArrayList<>();
+    private static final List<Student> CORRECT_STUDENT_COLLECTION = new ArrayList<>();
     private static final Faculty CORRECT_FACULTY = new Faculty();
     private static final JSONObject studentObject = new JSONObject();
     private static final JSONObject facultyObject = new JSONObject();
@@ -68,11 +68,13 @@ class StudentControllerTest {
 
         CORRECT_STUDENT.setFaculty(CORRECT_FACULTY);
 
+        CORRECT_STUDENT_COLLECTION.clear();
         CORRECT_STUDENT_COLLECTION.add(CORRECT_STUDENT);
 
         facultyObject.put("id", CORRECT_FACULTY.getId());
         facultyObject.put("name", CORRECT_FACULTY.getName());
         facultyObject.put("color", CORRECT_FACULTY.getColor());
+        studentObject.put("id", CORRECT_STUDENT.getId());
         studentObject.put("name", CORRECT_STUDENT.getName());
         studentObject.put("age", CORRECT_STUDENT.getAge());
         studentObject.put("faculty", facultyObject);
@@ -106,14 +108,14 @@ class StudentControllerTest {
     void getStudentFacultyByIdCorrect() throws Exception {
         when(studentRepository.findById(any(Long.class))).thenReturn(Optional.of(CORRECT_STUDENT));
 
-mockMvc.perform(MockMvcRequestBuilders
-        .get("/student/facultyById")
-                .param("id", CORRECT_STUDENT.getId().toString())
-        .accept(MediaType.APPLICATION_JSON))
-        .andExpect(status().isOk())
-        .andExpect(jsonPath("@.id").value(CORRECT_FACULTY.getId()))
-        .andExpect(jsonPath("@.name").value(CORRECT_FACULTY.getName()))
-        .andExpect(jsonPath("@.color").value(CORRECT_FACULTY.getColor()));
+        mockMvc.perform(MockMvcRequestBuilders
+                        .get("/student/facultyById")
+                        .param("id", CORRECT_STUDENT.getId().toString())
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("@.id").value(CORRECT_FACULTY.getId()))
+                .andExpect(jsonPath("@.name").value(CORRECT_FACULTY.getName()))
+                .andExpect(jsonPath("@.color").value(CORRECT_FACULTY.getColor()));
     }
 
     @Test
@@ -135,41 +137,87 @@ mockMvc.perform(MockMvcRequestBuilders
                         .get("/student/age/20")
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.class[0].id").value(CORRECT_STUDENT.getId()))
-                .andExpect(jsonPath("@.name").value(CORRECT_STUDENT.getName()))
-                .andExpect(jsonPath("@.age").value(CORRECT_STUDENT.getAge()));
+                .andExpect(jsonPath("[0].id").value(CORRECT_STUDENT.getId()))
+                .andExpect(jsonPath("[0].name").value(CORRECT_STUDENT.getName()))
+                .andExpect(jsonPath("[0].age").value(CORRECT_STUDENT.getAge()));
     }
 
     @Test
-    void getStudentByAgeBetween() {
+    void getStudentByAgeBetween() throws Exception {
+        when(studentRepository.findAllByAgeBetween(any(Integer.class), any(Integer.class))).thenReturn(CORRECT_STUDENT_COLLECTION);
+
+        mockMvc.perform(MockMvcRequestBuilders
+                        .get("/student/age")
+                        .param("min", "0")
+                        .param("max", "100")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("[0].id").value(CORRECT_STUDENT.getId()))
+                .andExpect(jsonPath("[0].name").value(CORRECT_STUDENT.getName()))
+                .andExpect(jsonPath("[0].age").value(CORRECT_STUDENT.getAge()));
     }
 
     @Test
-    void addStudent() {
-        //        Mockito.when(studentRepository.save(CORRECT_STUDENT)).thenReturn(CORRECT_STUDENT);
-//
-//        mockMvc.perform(MockMvcRequestBuilders
-//                .post("http://localhost:8080/student")
-//                .content(studentObject.toString())
-//                .contentType(MediaType.APPLICATION_JSON)
-//                .accept(MediaType.APPLICATION_JSON))
-//                .andExpect(status().isOk())
-//                .andExpect(jsonPath("$.age").value(CORRECT_STUDENT.getAge()));
+    void addStudentCorrect() throws Exception {
+        Mockito.when(studentRepository.save(CORRECT_STUDENT)).thenReturn(CORRECT_STUDENT);
+
+        mockMvc.perform(MockMvcRequestBuilders
+                        .post("/student")
+                        .content(studentObject.toString())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(CORRECT_STUDENT.getId()))
+                .andExpect(jsonPath("$.name").value(CORRECT_STUDENT.getName()))
+                .andExpect(jsonPath("$.age").value(CORRECT_STUDENT.getAge()));
     }
 
     @Test
-    void editStudent() {
+    void editStudent() throws Exception {
+        Mockito.when(studentRepository.save(CORRECT_STUDENT)).thenReturn(CORRECT_STUDENT);
+
+        mockMvc.perform(MockMvcRequestBuilders
+                        .put("/student")
+                        .content(studentObject.toString())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(CORRECT_STUDENT.getId()))
+                .andExpect(jsonPath("$.name").value(CORRECT_STUDENT.getName()))
+                .andExpect(jsonPath("$.age").value(CORRECT_STUDENT.getAge()));
     }
 
     @Test
-    void removeStudent() {
+    void removeStudentCorrect() throws Exception {
+        when(studentRepository.findById(any(Long.class))).thenReturn(Optional.of(CORRECT_STUDENT));
+
+        mockMvc.perform(MockMvcRequestBuilders
+                        .delete("/student/1")
+                        .content(studentObject.toString())
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(CORRECT_STUDENT.getId()))
+                .andExpect(jsonPath("$.name").value(CORRECT_STUDENT.getName()))
+                .andExpect(jsonPath("$.age").value(CORRECT_STUDENT.getAge()));
     }
 
     @Test
-    void clearStudent() {
+    void clearStudentCorrect() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders
+                        .delete("/student"))
+                .andExpect(status().isOk());
     }
 
     @Test
-    void getAllStudent() {
+    void getAllStudentCorrect() throws Exception {
+        when(studentRepository.findAll()).thenReturn(CORRECT_STUDENT_COLLECTION);
+
+        mockMvc.perform(MockMvcRequestBuilders
+                        .get("/student")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("[0].id").value(CORRECT_STUDENT.getId()))
+                .andExpect(jsonPath("[0].name").value(CORRECT_STUDENT.getName()))
+                .andExpect(jsonPath("[0].age").value(CORRECT_STUDENT.getAge()));
     }
 }
