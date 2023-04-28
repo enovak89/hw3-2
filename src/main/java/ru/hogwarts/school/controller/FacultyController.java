@@ -25,7 +25,7 @@ public class FacultyController {
         return ResponseEntity.ok(facultyService.getFacultyById(id).get());
     }
 
-    @GetMapping("studentsById")
+    @GetMapping("students-by-id")
     public ResponseEntity<Collection<Student>> getStudentsById(@RequestParam long id) {
         if (facultyService.getFacultyById(id).isEmpty())
             return ResponseEntity.badRequest().build();

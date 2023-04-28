@@ -29,7 +29,7 @@ public class StudentController {
         return ResponseEntity.ok(studentService.getStudentById(id).get());
     }
 
-    @GetMapping("facultyById")
+    @GetMapping("faculty-by-id")
     public ResponseEntity<Faculty> getStudentFacultyById(@RequestParam long id) {
         if (studentService.getStudentById(id).isEmpty())
             return ResponseEntity.badRequest().build();
