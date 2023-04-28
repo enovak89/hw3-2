@@ -15,6 +15,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
 
 @RestController
 public class AvatarController {
@@ -56,4 +57,26 @@ public class AvatarController {
             is.transferTo(os);
         }
     }
+
+    @GetMapping("/by-page")
+    public List<Avatar> findAll(@RequestParam Integer pageNumber, @RequestParam Integer pageSize) {
+        return avatarService.findAll(pageNumber, pageSize);
+    }
+
+//    @GetMapping("/by-page")
+//    public void findAll(@RequestParam Integer pageNumber, @RequestParam Integer pageSize, HttpServletResponse response) throws IOException {
+//        List<Avatar> findedAvatars = avatarService.findAll(pageNumber, pageSize);
+//        for (Avatar avatar : findedAvatars) {
+//            Path path = Path.of(avatar.getFilePath());
+//            try (
+//                    InputStream is = Files.newInputStream(path);
+//                    OutputStream os = response.getOutputStream();
+//            ) {
+//                response.setStatus(200);
+//                response.setContentType(avatar.getMediaType());
+//                response.setContentLength(avatar.getData().length);
+//                is.transferTo(os);
+//            }
+//        }
+//    }
 }

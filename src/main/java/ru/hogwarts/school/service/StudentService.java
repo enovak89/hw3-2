@@ -1,11 +1,11 @@
 package ru.hogwarts.school.service;
 
 import org.springframework.stereotype.Service;
-import ru.hogwarts.school.model.Faculty;
-import ru.hogwarts.school.model.Student;
+import ru.hogwarts.school.model.*;
 import ru.hogwarts.school.repository.StudentRepository;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -57,5 +57,17 @@ public class StudentService {
     public Faculty getStudentFaculty(Long id) {
 
         return studentRepository.findById(id).get().getFaculty();
+    }
+
+    public StudentsCount getStudentCount() {
+        return studentRepository.getStudentsCount();
+    }
+
+    public StudentsAverageAge getStudentAge() {
+        return studentRepository.getStudentAge();
+    }
+
+    public List<StudentsOrderedByIdDescLimit> getStudentsByIdDescLimit() {
+        return studentRepository.getStudentsByIdDescLimit();
     }
 }

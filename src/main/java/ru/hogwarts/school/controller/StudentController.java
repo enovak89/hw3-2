@@ -5,9 +5,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.hogwarts.school.model.Faculty;
 import ru.hogwarts.school.model.Student;
+import ru.hogwarts.school.model.StudentsOrderedByIdDescLimit;
 import ru.hogwarts.school.service.StudentService;
 
 import java.util.Collection;
+import java.util.List;
 
 @RestController
 @RequestMapping("student")
@@ -67,6 +69,21 @@ public class StudentController {
     @GetMapping
     public Collection<Student> getAllStudent() {
         return studentService.getAllStudent();
+    }
+
+    @GetMapping("/count")
+    public Integer getStudentCount() {
+        return studentService.getStudentCount().getCount();
+    }
+
+    @GetMapping("/average-age")
+    public Double getStudentAverageAge() {
+        return studentService.getStudentAge().getAvg();
+    }
+
+    @GetMapping("/five-latest")
+    public List<StudentsOrderedByIdDescLimit> getStudentsByIdDescLimit() {
+        return studentService.getStudentsByIdDescLimit();
     }
 
 }
