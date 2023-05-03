@@ -14,7 +14,5 @@ public class InfoController {
     public Integer getApplicationPort() {
         System.out.println(port);
         return port;
-//        System.out.println(System.getProperty("server.port"));
-//        return System.getProperty("local.server.port");
     }
 }
