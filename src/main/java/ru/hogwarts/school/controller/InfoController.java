@@ -7,9 +7,14 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class InfoController {
 
+    @Value("${server.port}")
+    Integer port;
+
     @GetMapping("/get-port")
-    public String getApplicationPort() {
-        System.out.println(System.getProperty("server.port"));
-        return System.getProperty("local.server.port");
+    public Integer getApplicationPort() {
+        System.out.println(port);
+        return port;
+//        System.out.println(System.getProperty("server.port"));
+//        return System.getProperty("local.server.port");
     }
 }
