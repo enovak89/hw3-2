@@ -1,5 +1,7 @@
 package ru.hogwarts.school.controller;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,17 +24,23 @@ public class StudentController {
         this.studentService = studentService;
     }
 
+    Logger logger = LoggerFactory.getLogger(StudentController.class);
+
     @GetMapping("id/{id}")
     public ResponseEntity<Student> getStudentById(@PathVariable long id) {
-        if (studentService.getStudentById(id).isEmpty())
+        if (studentService.getStudentById(id).isEmpty()) {
+            logger.error("There is not student with id {}", id);
             return ResponseEntity.status(HttpStatus.I_AM_A_TEAPOT).build();
+        }
         return ResponseEntity.ok(studentService.getStudentById(id).get());
     }
 
     @GetMapping("faculty-by-id")
     public ResponseEntity<Faculty> getStudentFacultyById(@RequestParam long id) {
-        if (studentService.getStudentById(id).isEmpty())
+        if (studentService.getStudentById(id).isEmpty()) {
+            logger.error("There is not student with id {}", id);
             return ResponseEntity.badRequest().build();
+        }
         return ResponseEntity.ok(studentService.getStudentFaculty(id));
     }
 
