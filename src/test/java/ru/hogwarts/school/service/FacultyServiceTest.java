@@ -67,7 +67,7 @@ class FacultyServiceTest {
 
         when(facultyRepository.findById(CORRECT_FACULTY.getId())).thenReturn(Optional.of(CORRECT_FACULTY));
 
-        Assertions.assertEquals(expectedResult, facultyService.getFacultyById(expectedResult.getId()));
+        Assertions.assertEquals(expectedResult, facultyService.getFacultyById(expectedResult.getId()).get());
     }
 
     @Test

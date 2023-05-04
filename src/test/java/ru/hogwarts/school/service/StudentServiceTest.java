@@ -61,7 +61,7 @@ class StudentServiceTest {
 
         when(studentRepository.findById(CORRECT_STUDENT.getId())).thenReturn(Optional.of(CORRECT_STUDENT));
 
-        Assertions.assertEquals(expectedResult, studentService.getStudentById(expectedResult.getId()));
+        Assertions.assertEquals(expectedResult, studentService.getStudentById(expectedResult.getId()).get());
     }
 
     @Test

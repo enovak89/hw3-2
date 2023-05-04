@@ -116,7 +116,7 @@ class FacultyControllerTest {
         when(studentRepository.findAllByFaculty_Id(any(Long.class))).thenReturn(CORRECT_STUDENT_COLLECTION);
 
         mockMvc.perform(MockMvcRequestBuilders
-                        .get("/faculty/studentsById")
+                        .get("/faculty/students-by-id")
                         .param("id", "1")
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())

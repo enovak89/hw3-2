@@ -109,7 +109,7 @@ class StudentControllerTest {
         when(studentRepository.findById(any(Long.class))).thenReturn(Optional.of(CORRECT_STUDENT));
 
         mockMvc.perform(MockMvcRequestBuilders
-                        .get("/student/facultyById")
+                        .get("/student/faculty-by-id")
                         .param("id", CORRECT_STUDENT.getId().toString())
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
