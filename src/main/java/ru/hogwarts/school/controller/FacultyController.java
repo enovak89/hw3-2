@@ -69,4 +69,14 @@ public class FacultyController {
         return facultyService.getFacultyByColorOrName(color, name);
     }
 
+    @GetMapping("longest-name")
+    public String getFacultyLongestName() {
+        return facultyService.getFacultyLongestName();
+    }
+
+    @GetMapping("integer-number")
+    public Integer getIntegerNumber() {
+        return facultyService.getIntegerNumber();
+    }
+
 }

@@ -9,6 +9,8 @@ import ru.hogwarts.school.repository.StudentRepository;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 public class StudentService {
@@ -83,5 +85,23 @@ public class StudentService {
     public List<StudentsOrderedByIdDescLimit> getStudentsByIdDescLimit() {
         logger.info("Was invoked method getStudentsByIdDescLimit");
         return studentRepository.getStudentsByIdDescLimit();
+    }
+
+    public List<String> getStudentNameWithA() {
+        logger.info("Was invoked method getStudentNameWithA");
+        return studentRepository.findAll().stream()
+                .map(Student::getName)
+                .filter(name -> name.startsWith("A") || name.startsWith("a"))
+                .map(String::toUpperCase)
+                .collect(Collectors.toList());
+    }
+
+    public Double getStudentAverageAge() {
+        logger.info("Was invoked method getStudentAverageAge");
+        Integer studentAgeSum = studentRepository.findAll().stream()
+                .map(Student::getAge)
+                .reduce(0, Integer::sum);
+        Long studentCount = studentRepository.findAll().stream().count();
+        return (double) studentAgeSum / studentCount;
     }
 }

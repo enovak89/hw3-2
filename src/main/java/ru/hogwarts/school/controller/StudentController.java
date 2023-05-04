@@ -94,4 +94,14 @@ public class StudentController {
         return studentService.getStudentsByIdDescLimit();
     }
 
+    @GetMapping("names-starts-with-A")
+    public List<String> getStudentNameWithA() {
+        return studentService.getStudentNameWithA();
+    }
+
+    @GetMapping("average-age-by-stream")
+    public Double getStudentAverageAgeByStreamApi() {
+        return studentService.getStudentAverageAge();
+    }
+
 }
