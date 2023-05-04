@@ -53,7 +53,7 @@ class StudentControllerTest {
     @PostConstruct
     public void initData() throws JSONException {
         Long id = 1L;
-        String STUDENT_NAME = "Petr";
+        String STUDENT_NAME = "Alex";
         int STUDENT_AGE = 20;
         String FACULTY_NAME = "First";
         String FACULTY_COLOR = "Red";
@@ -219,5 +219,27 @@ class StudentControllerTest {
                 .andExpect(jsonPath("[0].id").value(CORRECT_STUDENT.getId()))
                 .andExpect(jsonPath("[0].name").value(CORRECT_STUDENT.getName()))
                 .andExpect(jsonPath("[0].age").value(CORRECT_STUDENT.getAge()));
+    }
+
+    @Test
+    void getStudentNameWithACorrect() throws Exception {
+        when(studentRepository.findAll()).thenReturn(CORRECT_STUDENT_COLLECTION);
+
+        mockMvc.perform(MockMvcRequestBuilders
+                        .get("/student/names-starts-with-A")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").value(CORRECT_STUDENT.getName().toUpperCase()));
+    }
+
+    @Test
+    void getStudentAverageAgeByStreamApiCorrect() throws Exception {
+        when(studentRepository.findAll()).thenReturn(CORRECT_STUDENT_COLLECTION);
+
+        mockMvc.perform(MockMvcRequestBuilders
+                        .get("/student/average-age-by-stream")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").value(CORRECT_STUDENT.getAge()));
     }
 }

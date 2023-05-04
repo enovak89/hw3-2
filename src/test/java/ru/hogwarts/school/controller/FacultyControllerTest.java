@@ -216,4 +216,25 @@ class FacultyControllerTest {
                 .andExpect(jsonPath("[0].name").value(CORRECT_FACULTY.getName()))
                 .andExpect(jsonPath("[0].color").value(CORRECT_FACULTY.getColor()));
     }
+
+    @Test
+    void getFacultyLongestNameCorrect() throws Exception {
+        when(facultyRepository.findAll())
+                .thenReturn(CORRECT_FACULTY_COLLECTION);
+
+        mockMvc.perform(MockMvcRequestBuilders
+                        .get("/faculty/longest-name")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").value(CORRECT_FACULTY.getName()));
+    }
+
+    @Test
+    void getIntegerNumberCorrect() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders
+                        .get("/faculty/integer-number")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").value(1784293664));
+    }
 }

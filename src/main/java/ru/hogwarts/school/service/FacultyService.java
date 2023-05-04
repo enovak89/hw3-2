@@ -80,8 +80,8 @@ public class FacultyService {
         logger.info("Was invoked method getIntegerNumber");
         Integer result = Stream
                 .iterate(1, a -> a + 1)
-                .parallel()
                 .limit(1_000_000)
+                .parallel()
                 .reduce(0, (a, b) -> a + b );
         logger.info("Was executed method getIntegerNumber");
         return result;
